@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 font-sans">
+
+    <div class="w-11/12 max-w-md mx-auto bg-cover bg-center text-orange-400 mt-24 rounded-2xl p-10 text-center" style="background-image: url('pexels-photo-17593661.webp');">
+        <div class="flex items-center justify-center space-x-4 mb-8">
+            <input id="city-input" type="text" placeholder="Enter name of the city" spellcheck="false" class="w-full bg-teal-100 text-gray-700 p-3 h-14 rounded-full text-lg outline-none placeholder-gray-500">
+            <button id="search-button" class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center hover:bg-lime-300 hover:text-black">
+                <img src="search.png" alt="Search" class="w-4">
+            </button>
+        </div>
+
+        <div class="weather hidden">
+            <img src="weather02-1024.webp" class="w-44 mx-auto mt-8" alt="Weather Icon">
+            <h1 class="text-6xl font-medium mt-4 temperature">22°C</h1>
+            <h2 class="text-4xl font-light city mt-1">City Name</h2>
+            <div class="flex justify-between items-center px-5 mt-12">
+                <div class="flex items-center space-x-2">
+                    <img src="humidity.png" alt="Humidity Icon" class="w-10">
+                    <div class="text-left">
+                        <p class="text-2xl font-normal humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <img src="wind.png" alt="Wind Icon" class="w-10">
+                    <div class="text-left">
+                        <p class="text-2xl font-normal wind">15 Km/hr</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "93f3c95d287d2b48af316e0913281961";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const searchbox = document.getElementById("city-input");
+        const searchbtn = document.getElementById("search-button");
+
+        async function checkweather(city) {
+            if (!city) return;
+
+            try {
+                const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+                if (!response.ok) throw new Error("City not found");
+
+                const data = await response.json();
+                console.log(data);
+
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temperature").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " Km/hr";
+
+                document.querySelector(".weather").classList.remove("hidden");
+            } catch (error) {
+                alert(error.message);
+                document.querySelector(".weather").classList.add("hidden");
+            }
+        }
+
+        searchbtn.addEventListener("click", () => {
+            checkweather(searchbox.value);
+        });
+    </script>
+
+</body>
+</html>
